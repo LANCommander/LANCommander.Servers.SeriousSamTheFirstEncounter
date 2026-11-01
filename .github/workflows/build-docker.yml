@@ -1,4 +1,4 @@
-name: Build & Push Serious Sam: The First Encounter Server (Docker Hub)
+name: "Build & Push Serious Sam: The First Encounter Server (Docker Hub)"
 
 on:
   workflow_dispatch:
