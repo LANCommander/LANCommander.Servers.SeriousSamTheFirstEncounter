@@ -1,0 +1,29 @@
+#!/bin/sh
+# Start the Serious Sam: The First Encounter dedicated server (START_EXE).
+#
+# Runs `DedicatedServer.exe <SSAM_CONFIG> [<SSAM_MOD>]` from Bin/ under Wine. The server reads
+# Scripts/Dedicated_startup.ini, then Scripts/Dedicated/<SSAM_CONFIG>/init.ini and the per-round
+# <n>_begin.ini / <n>_end.ini scripts (see the 30-ConfigureSeriousSam hook). Any START_ARGS are
+# appended.
+set -e
+
+root="${SERVER_ROOT:-/config/Merged}"
+config="${SSAM_CONFIG:-LANCommander}"
+
+if [ ! -f "$root/Bin/DedicatedServer.exe" ]; then
+    echo "Bin/DedicatedServer.exe not found in $root. Put a Serious Sam: The First Encounter install in /config/Server." >&2
+    exit 1
+fi
+
+if [ ! -d "$root/Scripts/Dedicated/$config" ]; then
+    echo "Server config Scripts/Dedicated/$config not found in $root." >&2
+    exit 1
+fi
+
+set -- "$config" ${SSAM_MOD:+"$SSAM_MOD"} "$@"
+
+echo "Starting: DedicatedServer.exe $*"
+
+# The engine finds the game root as the parent of the executable's directory
+export WINE_WORKDIR="$root/Bin"
+exec wine-run DedicatedServer.exe "$@"
